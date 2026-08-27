@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  omniroute:
+    image: diegosouzapw/omniroute:latest
+    container_name: omniroute-gateway
+    profiles:
+      - cli
+    ports:
+      - "20128:20128"
+    environment:
+      - NODE_ENV=production
+      - OMNIROUTE_MEMORY_MB=1024
+    volumes:
+      - omniroute-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  omniroute-data:

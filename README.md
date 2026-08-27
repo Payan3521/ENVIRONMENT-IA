@@ -1,0 +1,1 @@
+comando para correr omniroute: docker compose --profile cli up -d
