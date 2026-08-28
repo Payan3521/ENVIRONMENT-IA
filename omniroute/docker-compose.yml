@@ -1,0 +1,41 @@
+# ──────────────────────────────────────────────────────────────────────
+#  OmniRoute · Gateway de IA (docker-compose)
+#  Documentación completa: README.md (en esta misma carpeta)
+# ──────────────────────────────────────────────────────────────────────
+#
+#  Usa `docker compose up -d` aquí dentro, o bien el instalador maestro
+#  de la raíz: `./install.sh omniroute`.
+#
+#  Explicación de cada clave:
+#    image            → imagen oficial de OmniRoute (contiene dashboard web
+#                       + gateway OpenAI-compatible + panel de configuración)
+#    container_name   → nombre fijo para identificarlo con docker ps/logs
+#    ports            → expone el puerto 20128 del contenedor en tu PC.
+#                       OmniRoute sirve:  http://localhost:20128        (dashboard)
+#                                          http://localhost:20128/v1     (API)
+#    environment      → NODE_ENV=production (modo estable)
+#                       OMNIROUTE_MEMORY_MB=1024 (límite interno de memoria)
+#                       Si tu PC tiene poca RAM, baja este valor a 512.
+#    volumes          → Volumen persistente: aquí OmniRoute guarda TODA su
+#                       configuración (contraseña, providers, combos, claves).
+#                       Si borras este volumen, pierdes la configuración.
+#    restart          → unless-stopped: si el PC se reinicia o el contenedor
+#                       muere, Docker lo levanta solo automáticamente.
+# ──────────────────────────────────────────────────────────────────────
+
+services:
+  omniroute:
+    image: diegosouzapw/omniroute:latest
+    container_name: omniroute-gateway
+    ports:
+      - "20128:20128"
+    environment:
+      - NODE_ENV=production
+      - OMNIROUTE_MEMORY_MB=1024
+    volumes:
+      - omniroute-data:/app/data
+    restart: unless-stopped
+
+# Volumen nombrado → sobrevive a `docker compose down` y a actualizaciones.
+volumes:
+  omniroute-data:
