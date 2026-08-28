@@ -50,11 +50,10 @@ Para que no cualquiera use tu gateway. `REQUIRE_API_KEY` es un **feature flag** 
 
 > ℹ️ **Alternativa por entorno:** la variable `REQUIRE_API_KEY` en `docker-compose.yml` hace lo mismo (default `false`). El toggle del dashboard es más cómodo porque no requiere reiniciar el contenedor. Usa uno solo para evitar confusiones.
 
-### Paso 3 · Crear las 2 API keys del gateway
+### Paso 3 · Crear la API key del gateway
 1. Ve a **Dashboard → API Keys** (Settings → API Keys en algunos diseños).
 2. Crea una key llamada **`omniroute-opencode`** → se usará para OpenCode.
-3. Crea otra llamada **`omniroute-`** → se usará para .
-4. Anótalas temporalmente (necesitarás `omniroute-` en el Paso 3 del README principal y `omniroute-opencode` en el Paso 4).
+3. Anótala temporalmente (necesitarás `omniroute-opencode` en el Paso 3 del README principal).
 
 ### Paso 4 · Agregar los proveedores con tus 45 API keys
 
@@ -82,7 +81,7 @@ El proceso por cada proveedor:
 Ve a **Combos → New Combo** y crea 3. Cada combo es una **lista ordenada de modelos**: OmniRoute intenta el primero y si falla (cuota, error, lentitud) cae al siguiente.
 
 **Flujo del builder por cada combo:**
-1. **Combo Name** = exactamente `combo-bajo` / `combo-medio` / `combo-avanzado` (ese es el ID que usarán /OpenCode).
+1. **Combo Name** = exactamente `combo-bajo` / `combo-medio` / `combo-avanzado` (ese es el ID que usará OpenCode).
 2. **Estrategia (Strategy)** = **`Priority`** ("Sequential fallback: tries model 1 first, then 2, etc."). Evita hoy `Round Robin` (reparte en círculo, no hay respaldo real) y `Fill First` (es a nivel de cuentas, se usa en Settings → Routing).
 3. Agrega los modelos **en ese orden** uno a uno con **Add model**, tecleando `provider/model`.
 4. **Review**: es solo una pantalla de confirmación. Verifica Nombre + Strategy + orden de pasos, **déjalo todo por defecto** y guarda.
@@ -96,7 +95,7 @@ Ve a **Combos → New Combo** y crea 3. Cada combo es una **lista ordenada de mo
 | 2 | `mistral/mistral-small-2603` | Mistral |
 | 3 | `groq/openai/gpt-oss-20b` | Groq |
 
-#### 🟡 Combo `medio` — desarrollo ligero (por defecto de )
+#### 🟡 Combo `medio` — desarrollo ligero (por defecto de OpenCode)
 | # | Modelo | Proveedor |
 |---|---|---|
 | 1 | `gemini/gemini-3.6-flash` | Gemini |
@@ -120,7 +119,7 @@ Ve a **Combos → New Combo** y crea 3. Cada combo es una **lista ordenada de mo
 
 > ⚠️ **Los planes gratuitos de 2026 cambian.** Si un modelo empieza a fallar o desaparece (Gemini/Groq/Mistral), consúltalo: [troubleshooting.md](../docs/troubleshooting.md) → "Modelo retirado de la capa gratuita". Ejemplo real: `gemini-2.5-flash-lite` fue retirado por Google y se sustituyó por `gemini-3.5-flash-lite`.
 
-Los IDs de los combos que usarán /OpenCode serán (en  se ven como `openai/combo-*`):
+Los IDs de los combos que usará OpenCode serán `combo-*`:
 ```
 combo-bajo, combo-medio, combo-avanzado
 ```
@@ -141,7 +140,7 @@ Era tu "aplanar contexto": ayuda a gastar menos tokens y alarga la cuota diaria 
 7. **Preserve system prompt** = deja el **ON** por defecto (protege las instrucciones del agente).
 8. Resto de motores (session-dedup, ccr, headroom, llmlingua, ultra, aggressive, codex-responses, omniglyph): **déjalos OFF** al inicio. Guarda.
 
-> 🔒 **Caveman protege el código por diseño:** aunque no configures `preservePatterns`, Caveman trae patrones **built-in** obligatorios que protegen bloques de código, rutas de archivos, URLs, variables de entorno y mensajes de error. Perfecto para /OpenCode.
+> 🔒 **Caveman protege el código por diseño:** aunque no configures `preservePatterns`, Caveman trae patrones **built-in** obligatorios que protegen bloques de código, rutas de archivos, URLs, variables de entorno y mensajes de error. Perfecto para OpenCode.
 
 > ⚠️ **Si notas respuestas raras** (texto machacado): baja RTK a `standard` y Caveman a `full`. Si todo va bien, déjalo al máximo.
 

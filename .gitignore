@@ -7,15 +7,6 @@
 *.env
 !.env.example
 
-# Datos generados en tiempo de ejecución por 
-# (se ignora TODO menos las plantillas *.example, que sí se suben)
-/config/*
-/config/**/*
-!/config/*.example
-!/config/**/*.example
-/workspace/*
-/workspace/*/
-
 # Bases de datos SQLite y artefactos temporales
 *.sqlite
 *.sqlite-wal

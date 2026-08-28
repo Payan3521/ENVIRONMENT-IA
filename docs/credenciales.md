@@ -53,11 +53,9 @@ El ecosistema usa **15 cuentas de correo × 3 proveedores = 45 API keys**.
 | Clave | Para qué sirve | Valor |
 |---|---|---|
 | **Contraseña maestra OmniRoute** (dashboard) | Entrar a `http://localhost:20128` | `________` |
-| **API key OmniRoute · ** | Autenticar al agente contra el gateway | `sk-...` |
-| **API key OmniRoute · OpenCode** | Autenticar al CLI contra el gateway (Paso 4) | `sk-...` |
-| **Token gateway ** | Entrar a la web del agente `http://localhost:18789` | `________` |
+| **API key OmniRoute · OpenCode** | Autenticar al CLI contra el gateway (Paso 3) | `sk-...` |
 
-> 🔑 **API keys de OmniRoute** (las de /OpenCode) se crean en **Dashboard → API Keys** del propio OmniRoute, NO se generan en una web externa.
+> 🔑 **API keys de OmniRoute** (la de OpenCode) se crean en **Dashboard → API Keys** del propio OmniRoute, NO se generan en una web externa.
 
 ---
 
@@ -66,9 +64,6 @@ El ecosistema usa **15 cuentas de correo × 3 proveedores = 45 API keys**.
 ```
 ENVIRONMENT-IA/
 ├── omniroute/            ← Proveedores + combos → se configuran en la WEB (localhost:20128)
-├── /
-│   ├── .env              ← key  + BASE_URL + token gateway   (NO se sube)
-│   └── config/.json  ← baseUrl + key + combos (modelos)       (NO se sube)
 └── opencode/
     └── .env              ← key OPENCODE + BASE_URL                    (NO se sube)
 ```
@@ -80,11 +75,10 @@ ENVIRONMENT-IA/
 
 ## ✅ Checklist de una instalación nueva
 
-- [ ] Levantar contenedores: `./install.sh`
-- [ ] OmniRoute: contraseña maestra → `REQUIRE_API_KEY` → 2 API keys → 3 proveedores → 3 combos → compresión
-- [ ] : `.env` + `.json` con la key de OmniRoute
+- [ ] Levantar servicios (OmniRoute en Docker): `./install.sh`
+- [ ] OmniRoute: contraseña maestra → `REQUIRE_API_KEY` → 1 API key → 3 proveedores → 3 combos → compresión
 - [ ] Agregar en **Providers** cada una de las 45 keys (15 por proveedor)
 - [ ] Dejar los modelos de los combos en **AUTO** (para que roten entre cuentas)
-- [ ] Verificar: `curl` de los 3 combos + chat en `localhost:18789`
+- [ ] Verificar: `curl` de los 3 combos
 
 > **Estado actual de este ecosistema:** 15/45 keys agregadas (5 cuentas × 3 proveedores) y rotación AUTO activa. Faltan solo las 10 cuentas restantes (30 keys).

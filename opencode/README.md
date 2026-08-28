@@ -1,9 +1,9 @@
 # 💻 OpenCode — Asistente de código CLI
 
-> ⏳ **PESTAÑA EN CONSTRUCCIÓN · PASO 4 DEL ECOSISTEMA**
+> ⏳ **PESTAÑA EN CONSTRUCCIÓN · PASO 3 DEL ECOSISTEMA**
 
 Esta carpeta se deja **intencionalmente sin revisar** hasta que terminemos los
-pasos 1–3 (contenedores de OmniRoute +  funcionando y conectados).
+pasos 1–2 (OmniRoute en Docker funcionando y conectado).
 
 **Estado actual del contenido:**
 - ✅ Scripts funcionales (`opencode-install.bash`, `connect-omniroute-credentials.bash`) — **NO tocados**.
@@ -18,4 +18,4 @@ pasos 1–3 (contenedores de OmniRoute +  funcionando y conectados).
   1. **Variables de entorno permanentes** (`OPENAI_BASE_URL` + `OPENAI_API_KEY` — vía `connect-omniroute-credentials.bash`).
   2. **Plugin oficial de OmniRoute** (recomendado): descubre tus combos automáticamente en el selector de modelos.
 
-Volveremos aquí en el **Paso 4**. Mientras tanto, NO tocar esta carpeta.
+Volveremos aquí en el **Paso 3**. Mientras tanto, NO tocar esta carpeta.

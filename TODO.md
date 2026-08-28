@@ -1,6 +1,6 @@
 # ✅ TODO — Lo que falta por hacer
 
-Estado verificado en vivo (contenedores `healthy`): OmniRoute `:20128` ✅ ·  `:18789` ✅ · OpenCode v1.18.23 instalado ✅.
+Estado verificado en vivo: OmniRoute (contenedor `omniroute-gateway`, healthy) `:20128` ✅ · OpenCode v1.18.23 instalado ✅.
 
 ---
 
@@ -39,12 +39,12 @@ Estado verificado en vivo (contenedores `healthy`): OmniRoute `:20128` ✅ ·  `
 
 ---
 
-## C · Conectar OpenCode (Paso 4) — pendiente
+## C · Conectar OpenCode (Paso 3) — pendiente
 
 **Situación actual (verificada):**
 - ✅ OpenCode instalado (v1.18.23).
 - ⚠️ El provider `omniroute` en `~/.config/opencode/opencode.json` tiene la **key VIEJA** `sk-2c64...` (la del 401, superada).
-- ⚠️ Solo existe la API key **`omniroute-`** en OmniRoute. **Falta crear `omniroute-opencode`**.
+- ⚠️ El dashboard de OmniRoute no tiene API keys todavía: **falta crear `omniroute-opencode`**.
 - ⚠️ `opencode/.env` también lleva la key vieja.
 - ⚠️ `connect-omniroute-credentials.bash` aún no se ha ejecutado (no hay vars en `~/.bashrc`).
 
@@ -69,18 +69,15 @@ OmniRoute expone `http://localhost:20128/v1` (API compatible con OpenAI), así q
 ## E · Verificación final end-to-end (cuando esté todo)
 
 ```bash
-# 1. Chequeo de contenedores
-docker ps | grep -E "omniroute|"
+# 1. Chequeo de servicios (OmniRoute en Docker)
+docker ps | grep omniroute
 
 # 2. Prueba de un combo vía la API de OmniRoute
 curl http://localhost:20128/v1/chat/completions \
   -H "Authorization: Bearer <tu-key>" -H "Content-Type: application/json" \
   -d '{"model":"combo-medio","messages":[{"role":"user","content":"Hola"}],"max_tokens":2048}'
 
-# 3. Chat en 
-#     http://localhost:18789  → debe responder usando OmniRoute
-
-# 4. OpenCode / Cursor / Antigravity
+# 3. OpenCode / Cursor / Antigravity
 #     abrir un chat y confirmar que usan el proveedor "omniroute" (modelo combo-*)
 ```
 
@@ -89,7 +86,7 @@ curl http://localhost:20128/v1/chat/completions \
 - [ ] API key `omniroute-opencode` creada en OmniRoute
 - [ ] `opencode/.env` + `~/.config/opencode/opencode.json` con la key nueva
 - [ ] Cursor / Antigravity conectados a `:20128/v1`
-- [ ] Los 3 combos responden + chat en , OpenCode, Cursor/Antigravity
+- [ ] Los 3 combos responden en OpenCode, Cursor/Antigravity
 
 ---
 

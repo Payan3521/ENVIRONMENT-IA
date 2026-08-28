@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 # ══════════════════════════════════════════════════════════════════════
 #  ENVIRONMENT-IA · Instalador maestro
-#  Instala y levanta OmniRoute y/o  en contenedores Docker.
+#  Instala y levanta OmniRoute (el gateway de IA en contenedor Docker).
 #
 #  Uso:
 #    ./install.sh              → menú interactivo
-#    ./install.sh all          → instala OmniRoute + 
-#    ./install.sh omniroute    → solo OmniRoute
-#    ./install.sh      → solo 
+#    ./install.sh all          → instala OmniRoute
+#    ./install.sh omniroute    → instala OmniRoute
 # ══════════════════════════════════════════════════════════════════════
 set -e
 
@@ -19,7 +18,7 @@ banner() {
   echo -e "${CYN}"
   echo "  ╔═══════════════════════════════════════════════════════════╗"
   echo "  ║               ENVIRONMENT-IA · INSTALADOR                 ║"
-  echo "  ║       OmniRoute (port 20128) +  (port 18789)     ║"
+  echo "  ║              OmniRoute (port 20128)                       ║"
   echo "  ╚═══════════════════════════════════════════════════════════╝"
   echo -e "${NC}"
 }
@@ -52,17 +51,11 @@ check_docker() {
   ok "Compose detectado: $(docker compose version)"
 }
 
-# ─── Instaladores por servicio ───────────────────────────────────────
+# ─── Instalador de OmniRoute ─────────────────────────────────────────
 install_omniroute() {
   echo ""
   info "▶ Instalando OmniRoute (gateway de IA)..."
   bash "$DIR/omniroute/install.sh"
-}
-
-install_() {
-  echo ""
-  info "▶ Instalando  (agente autónomo)..."
-  bash "$DIR//install.sh"
 }
 
 # ─── Resumen final ───────────────────────────────────────────────────
@@ -73,15 +66,12 @@ summary() {
   echo "  ║              INSTALACIÓN COMPLETADA                       ║"
   echo "  ╚═══════════════════════════════════════════════════════════╝"
   echo -e "${NC}"
-  echo "  PUERTOS:"
+  echo "  PUERTO:"
   echo "    OmniRoute  →  http://localhost:20128   (dashboard + API)"
-  echo "       →  http://localhost:18789   (gateway web)"
   echo ""
   echo "  SIGUIENTE PASO: configurar OmniRoute en el navegador"
   echo "    (contraseña maestra, API keys, providers con tus 45 keys,"
   echo "     combos y compresión) → lee  omniroute/README.md"
-  echo ""
-  echo "  Luego conecta  → lee  /README.md"
   echo ""
   echo "  ¿Olvidaste algo? Lo más importante:"
   echo "    1) Pon una CONTRASEÑA FUERTE a OmniRoute y guárdala."
@@ -97,33 +87,24 @@ main() {
   MODE="${1:-menu}"
 
   case "$MODE" in
-    all)
+    all|omniroute)
       install_omniroute
-      install_
-      ;;
-    omniroute)
-      install_omniroute
-      ;;
-    )
-      install_
       ;;
     menu)
       echo ""
       echo "  ¿Qué quieres instalar?"
       PS3="  Selecciona una opción: "
-      select opt in "Todo (OmniRoute + )" "Solo OmniRoute" "Solo " "Salir"; do
+      select opt in "Instalar OmniRoute" "Salir"; do
         case "$opt" in
-          "Todo (OmniRoute + )") install_omniroute; install_; break;;
-          "Solo OmniRoute")            install_omniroute; break;;
-          "Solo ")             install_;    break;;
-          "Salir")                     echo "  Hasta luego 👋"; exit 0;;
+          "Instalar OmniRoute") install_omniroute; break;;
+          "Salir")              echo "  Hasta luego 👋"; exit 0;;
           *) echo "  Opción inválida";;
         esac
       done
       ;;
     *)
       err "Argumento desconocido: $MODE"
-      echo "  Uso: ./install.sh [all|omniroute|]"
+      echo "  Uso: ./install.sh [all|omniroute]"
       exit 1
       ;;
   esac
