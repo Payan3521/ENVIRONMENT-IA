@@ -87,14 +87,14 @@ Ve a **Combos → New Combo** y crea 3. Cada combo es una **lista ordenada de mo
 3. Agrega los modelos **en ese orden** uno a uno con **Add model**, tecleando `provider/model`.
 4. **Review**: es solo una pantalla de confirmación. Verifica Nombre + Strategy + orden de pasos, **déjalo todo por defecto** y guarda.
 
-> Los modelos listados abajo **fueron creados y verificados** en esta instalación (agosto 2026). Estrategia de los 3: `priority`, cada modelo anclado a la única cuenta del proveedor disponible (al agregar las otras 14 cuentas, la rotación las distribuye sola).
+> Los modelos listados abajo **fueron creados y verificados** en esta instalación (agosto 2026). Estrategia de los 3: `priority`. Todos los modelos están en **AUTO** (sin conexión fija), así que OmniRoute **rota automáticamente** entre las cuentas activas de cada proveedor (actualmente 5 por proveedor; llegarán a 15).
 
 #### 🟢 Combo `bajo` — tareas simples, chat, respuestas rápidas
 | # | Modelo | Proveedor |
 |---|---|---|
-| 1 | `gemini/gemini-2.5-flash-lite` | Gemini |
-| 2 | `groq/openai/gpt-oss-20b` | Groq |
-| 3 | `mistral/mistral-small-2603` | Mistral |
+| 1 | `gemini/gemini-3.5-flash-lite` | Gemini |
+| 2 | `mistral/mistral-small-2603` | Mistral |
+| 3 | `groq/openai/gpt-oss-20b` | Groq |
 
 #### 🟡 Combo `medio` — desarrollo ligero (por defecto de )
 | # | Modelo | Proveedor |
@@ -103,20 +103,22 @@ Ve a **Combos → New Combo** y crea 3. Cada combo es una **lista ordenada de mo
 | 2 | `groq/openai/gpt-oss-120b` | Groq |
 | 3 | `mistral/mistral-medium-2604` | Mistral |
 
-#### 🔴 Combo `avanzado` — desarrollo complejo, razonamiento profundo
+#### 🔴 Combo `avanzado` — desarrollo complejo / código / razonamiento
 | # | Modelo | Proveedor |
 |---|---|---|
 | 1 | `gemini/gemini-3.7-flash` | Gemini |
-| 2 | `mistral/mistral-large-2512` | Mistral |
-| 3 | `mistral/codestral-2508` | Mistral |
-| 4 | `mistral/devstral-2512` | Mistral |
+| 2 | `mistral/codestral-2508` | Mistral |
+| 3 | `mistral/devstral-2512` | Mistral |
+| 4 | `mistral/mistral-large-2512` | Mistral |
 
 **Contexto efectivo de cada combo** (verificado vía `/v1/models`): `combo-bajo` = 128K · `combo-medio` = 128K · `combo-avanzado` = 256K.
 > ℹ️ Nota: el contexto efectivo de un combo es el **mínimo común** de los modelos que lo forman. Por eso conviene que los modelos de un combo tengan límites de contexto y de salida similares.
 
-> ℹ️ **Modelos Mistral:** `codestral-2508` y `devstral-2512` son los modelos **dedicados a código** de Mistral (ideales para desarrollo/agentes), y `mistral-medium-2604` / `mistral-large-2512` son generalistas potentes. Son comparables o superiores, en tareas de código, a `DeepSeek V4 Flash`.
+> ℹ️ **Modelos Mistral:** `codestral-2508` y `devstral-2512` son los modelos **dedicados a código** de Mistral (ideales para desarrollo/agentes, y rápidos). `mistral-medium-2604` es un generalista potente, y `mistral-large-2512` es el **más potente pero más lento** — por eso en `combo-avanzado` va último, solo como respaldo cuando los rápidos fallan.
 
-> ⚠️ **Los planes gratuitos de 2026 cambian.** Si un modelo empieza a fallar o desaparece (Gemini/Groq/Mistral), consúltalo: [troubleshooting.md](../docs/troubleshooting.md) → "Modelo retirado de la capa gratuita".
+> ℹ️ **Rotación:** como cada modelo está en AUTO, OmniRoute reparte las peticiones entre las cuentas activas del proveedor y salta a la siguiente cuando una se satura o falla. **No hay que tocar los combos** al añadir más cuentas.
+
+> ⚠️ **Los planes gratuitos de 2026 cambian.** Si un modelo empieza a fallar o desaparece (Gemini/Groq/Mistral), consúltalo: [troubleshooting.md](../docs/troubleshooting.md) → "Modelo retirado de la capa gratuita". Ejemplo real: `gemini-2.5-flash-lite` fue retirado por Google y se sustituyó por `gemini-3.5-flash-lite`.
 
 Los IDs de los combos que usarán /OpenCode serán (en  se ven como `openai/combo-*`):
 ```
@@ -180,6 +182,20 @@ docker compose down
 # ⚠️ Borrar TODOS los datos (contraseña, keys, combos) — irrecuperable
 docker compose down -v
 ```
+
+---
+
+## ⚡ Usar OmniRoute con Cursor / Antigravity (y cualquier cliente OpenAI)
+
+OmniRoute expone una **API compatible con OpenAI** en `http://localhost:20128/v1`, así que cualquier editor/CLI que permita configurar una base URL y una API key se conecta automáticamente: **Cursor, Antigravity, Claude Code, Windsurf, Cline, VS Code, etc.** (OmniRoute tiene incluso guías oficiales dedicadas a Cursor).
+
+**Pasos generales (igual para todos):**
+1. Ten una **API key de OmniRoute** (crea una por cliente en **Dashboard → API Keys** para poder revocarlas por separado si quieres — p. ej. `omniroute-cursor`, `omniroute-antigravity`).
+2. En el cliente, configura el **base URL** como `http://localhost:20128/v1`.
+3. Pon esa API key y selecciona un modelo `combo-bajo` / `combo-medio` / `combo-avanzado`.
+4. Listo: el cliente consume la IA vía OmniRoute con toda la rotación de las 45 cuentas.
+
+> ⚠️ Para **Antigravity** (y algunos clientes que esperan el endpoint de Anthropic) OmniRoute también ofrece un endpoint compatible con Anthropic, además del de OpenAI. Consulta la doc oficial de cada cliente para saber qué base URL usar.
 
 ---
 

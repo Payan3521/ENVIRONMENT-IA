@@ -190,7 +190,7 @@ docker logs --tail 100 omniroute-gateway 2>&1 | grep -iE "All models|RATE-LIMIT|
 - **`402`** (Mistral "insufficient credits / can only afford X tokens"): la cuenta Mistral se agotó → añade más cuentas Mistral (cada cuenta free tiene ~1B tokens/mes y se renueva sola).
 - **`504`** (Gemini "maxWaitMs=15000"): la única cuenta Gemini se congestiona y OmniRoute aborta en 15s → **YA RESUELTO**: subimos `requestQueue.maxWaitMs` a `120000` ms. Para un equipo nuevo, la ruta correcta es **Settings → Resilience → Request Queue → Max Queue Wait** (NO está en Routing). Más abajo en la §9c.
 
-**Solución de raíz:** añadir las otras 14 cuentas (42 keys) en Providers para que la rotación reparta la carga. Con 1 cuenta por proveedor, cualquier pico satura el combo completo.
+**Solución de raíz:** añadir más cuentas en Providers para que la rotación reparta la carga. A partir de varias cuentas por proveedor, cualquier pico ya no satura el combo completo (actualmente 5 por proveedor; objetivo: 15).
 
 ---
 
@@ -206,7 +206,7 @@ docker logs --tail 100 omniroute-gateway 2>&1 | grep -iE "All models|RATE-LIMIT|
 3. Súbelo a **`120000`** ms (2 minutos) y guarda.
 4. Verificado en base de datos: `resilienceSettings.requestQueue.maxWaitMs = 120000`.
 
-> 💡 Si la respuesta tarda pero **no** sale error, es normal: con 1 cuenta por proveedor todo espera en cola. Se arregla de raíz añadiendo las 14 cuentas restantes.
+> 💡 Si la respuesta tarda pero **no** sale error, es normal: al arrancar con pocas cuentas todo puede esperar en cola. Se alivia añadiendo más cuentas del proveedor en cuestión (la rotación reparte la carga).
 
 ---
 
@@ -231,7 +231,7 @@ Esto lo aprendimos **en esta instalación** probando varios proveedores. **Resum
 
 ## 9e. Verificar que la rotación entre cuentas funciona
 
-Cuando ya hayas añadido las 14 cuentas restantes de cada proveedor, comprueba que **ningún modelo quedó "pegado"** a una sola cuenta:
+Cuando hayas añadido todas las cuentas de cada proveedor, comprueba que **ningún modelo quedó "pegado"** a una sola cuenta:
 
 1. Abre **http://localhost:20128** → **Providers** → selecciona cada proveedor.
 2. Revisa si algún modelo aparece como **`accountPinned`** (fijado) a la cuenta 01 — si lo está, la rotación no repartirá carga entre las 15.

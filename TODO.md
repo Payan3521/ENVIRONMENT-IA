@@ -4,56 +4,69 @@ Estado verificado en vivo (contenedores `healthy`): OmniRoute `:20128` ✅ ·  `
 
 ---
 
-## A · Agregar las 42 API keys restantes (14 cuentas × 3 proveedores)
+## ✅ Hecho (avance actual)
 
-**Situación actual (verificada en la DB de OmniRoute):** solo hay **3 conexiones** de las 45:
+- **15/45 API keys agregadas** (5 cuentas × 3 proveedores: Gemini, Groq, Mistral). Una por cuenta, todas `active` en la DB.
+- **Rotación ACTIVA:** los 3 combos tienen todos sus modelos en **AUTO** (sin conexión fija), así que OmniRoute reparte entre las cuentas y salta a la siguiente si una falla/se satura. Verificado: una cuenta que falla hace que OmniRoute pruebe otra automáticamente.
+- **Combos revisados y probados** (responden `200`):
+  - `combo-bajo`: `Gemini 3.5-flash-lite → Mistral Small → Groq GPT-OSS-20B`
+  - `combo-medio`: `Gemini 3.6-flash → Groq GPT-OSS-120B → Mistral Medium`
+  - `combo-avanzado`: `Gemini 3.7-flash → Codestral → Devstral → Mistral Large` (se bajó `mistral-large` al final por lentitud)
+- **`gemini-2.5-flash-lite` sustituido** por `gemini-3.5-flash-lite` (el 1º fue retirado por Google → 404).
+- **Documentación actualizada** a la configuración real (combos, rotación, 15 keys).
 
-| Proveedor | Conexiones existentes | Faltan |
-|---|---|---|
-| Gemini | `gemini-cuenta-01` | 14 (cuenta-02 → cuenta-15) |
-| Groq | `grop-cuenta-01` | 14 |
-| Mistral | `mistral-cuenta-01` | 14 |
+---
 
-**Qué hacer:**
-1. Ordena tus 45 keys en `docs/credenciales.md` (plantilla ya lista).
-2. Abre **http://localhost:20128** → **Providers**.
-3. En cada proveedor (Gemini / Groq / Mistral) pulsa **Add Connection / Add Key** y pega las keys de la cuenta-02 a la cuenta-15 (nombre `gemini-cuenta-02`, etc.).
-4. Guarda y espera a que OmniRoute haga la **prueba de salud** de cada una.
+## A · Agregar las 30 API keys restantes (10 cuentas × 3 proveedores) ← LO ÚNICO QUE FALTA EN OMNIROUTE
+
+**Situación actual (verificada en la DB):** 15 cuentas que ya tienes (01 → 05). Faltan **10 cuentas** (06 → 15), es decir **30 keys** (10 Gemini + 10 Groq + 10 Mistral).
+
+**Qué hacer (por cada una de las 10 cuentas nuevas):**
+1. Abre **http://localhost:20128** → **Providers**.
+2. En cada proveedor (Gemini / Groq / Mistral) pulsa **Add Connection** y pega la key de la cuenta nueva (nombre `gemini-cuenta-06`, `groq-cuenta-06`, `mistral-cuenta-06`, etc.).
+3. Guarda y espera a que OmniRoute haga la **prueba de salud** (debe quedar `active`).
+4. **No toques los combos:** ya están en AUTO y rotarán solos con las nuevas cuentas.
 
 > 🚫 NO uses OpenRouter / Cerebras / NVIDIA (descartados, ver `docs/troubleshooting.md` §9d).
+> 💡 Usa la tabla de `docs/credenciales.md` para llevar la cuenta de cuáles ya agregaste.
 
 ---
 
-## B · Configuración final de la rotación
+## B · Verificación final de rotación (cuando agregues las 10 restantes)
 
-1. Al agregar las 14 cuentas restantes, omniRoute debería repartir la carga **solo** al saturarse una cuenta.
-2. **Verificar que ningún modelo quedó "anclado"** a la cuenta 01 (`accountPinned`): en **Providers → [proveedor]**, revisa cada modelo y des-ancla cualquier pin.
-3. Haz varias peticiones y mira **Providers → Usage** que se van marcando distintas cuentas (cuenta 01, 02, …).
-   → Guía completa en `docs/troubleshooting.md` §9e.
-
-> ⚠️ Con 1 sola cuenta por proveedor la rotación no tiene a dónde ir: cualquier pico satura el combo (es lo que provocaba `421/429`). Al completar el Paso A esto se resuelve de raíz.
+1. Haz varias peticiones a un combo y mira en **Providers → Usage** que se van marcando **distintas cuentas** (01, 02, 03, …), no siempre la misma.
+2. Confirma que **ningún modelo quedó anclado** (`accountPinned` a una sola cuenta). → Guía en `docs/troubleshooting.md` §9e.
 
 ---
 
-## C · OpenCode (Paso 4) — conectar a OmniRoute
+## C · Conectar OpenCode (Paso 4) — pendiente
 
 **Situación actual (verificada):**
 - ✅ OpenCode instalado (v1.18.23).
-- ⚠️ Ya existe un provider `omniroute` en `~/.config/opencode/opencode.json`, pero con la **key VIEJA** `sk-2c64...` (la del 401, superada).
-- ⚠️ Solo existe la API key **`omniroute-`** en OmniRoute. **Falta crear `omniroute-opencode`** (hoy no existe en la DB).
+- ⚠️ El provider `omniroute` en `~/.config/opencode/opencode.json` tiene la **key VIEJA** `sk-2c64...` (la del 401, superada).
+- ⚠️ Solo existe la API key **`omniroute-`** en OmniRoute. **Falta crear `omniroute-opencode`**.
 - ⚠️ `opencode/.env` también lleva la key vieja.
-- ⚠️ `connect-omniroute-credentials.bash` todavía **no se ha ejecutado** (no hay vars en `~/.bashrc`).
+- ⚠️ `connect-omniroute-credentials.bash` aún no se ha ejecutado (no hay vars en `~/.bashrc`).
 
 **Qué hacer (en orden):**
-1. En el dashboard de OmniRoute (**Dashboard → API Keys**) crea una key nueva **`omniroute-opencode`** y cópiala.
-2. Actualiza `opencode/.env` → pon `OMNIROUTE_API_KEY="sk-...de omniroute-opencode"`.
-3. Actualiza `~/.config/opencode/opencode.json` → en el provider `omniroute`, cambia `apiKey` por la key nueva (deja `baseURL: http://localhost:20128/v1` y los modelos `combo-*`).
-4. (Opcional) ejecuta `./connect-omniroute-credentials.bash` dentro de `opencode/` para inyectar `OPENAI_BASE_URL` + `OPENAI_API_KEY` en `~/.bashrc`, y luego `source ~/.bashrc`.
-5. (Opcional) revisar el **plugin oficial de OmniRoute** para que descubra los combos automáticamente en el selector de modelos.
+1. En **Dashboard → API Keys** crea la key **`omniroute-opencode`** y cópiala.
+2. Actualiza `opencode/.env` → `OMNIROUTE_API_KEY="sk-...de omniroute-opencode"`.
+3. Actualiza `~/.config/opencode/opencode.json` → en el provider `omniroute`, cambia `apiKey` (deja `baseURL: http://localhost:20128/v1` y los modelos `combo-*`).
+4. (Opcional) ejecuta `./connect-omniroute-credentials.bash` dentro de `opencode/` y `source ~/.bashrc`.
 
 ---
 
-## D · Verificación final end-to-end (cuando esté todo)
+## D · Conectar Cursor / Antigravity (cualquier cliente OpenAI) — pendiente / opcional
+
+OmniRoute expone `http://localhost:20128/v1` (API compatible con OpenAI), así que **Cursor y Antigravity** se conectan igual:
+1. Crea una API key por cliente en **Dashboard → API Keys** (p. ej. `omniroute-cursor`, `omniroute-antigravity`).
+2. En el cliente, base URL = `http://localhost:20128/v1` + esa key.
+3. Selecciona un modelo `combo-bajo` / `combo-medio` / `combo-avanzado`.
+   → Detalles en `omniroute/README.md` → "Usar OmniRoute con Cursor / Antigravity".
+
+---
+
+## E · Verificación final end-to-end (cuando esté todo)
 
 ```bash
 # 1. Chequeo de contenedores
@@ -67,16 +80,16 @@ curl http://localhost:20128/v1/chat/completions \
 # 3. Chat en 
 #     http://localhost:18789  → debe responder usando OmniRoute
 
-# 4. OpenCode
-opencode
-#     abrir un chat y confirmar que usa el provider "omniroute" (modelo combo-*)
+# 4. OpenCode / Cursor / Antigravity
+#     abrir un chat y confirmar que usan el proveedor "omniroute" (modelo combo-*)
 ```
 
 - [ ] 3 proveedores × 15 cuentas = 45 keys en OmniRoute → **Providers**
 - [ ] Rotación reparte entre cuentas (sin `accountPinned`) → §9e
 - [ ] API key `omniroute-opencode` creada en OmniRoute
 - [ ] `opencode/.env` + `~/.config/opencode/opencode.json` con la key nueva
-- [ ] Los 3 combos responden + chat en  y OpenCode funcionan
+- [ ] Cursor / Antigravity conectados a `:20128/v1`
+- [ ] Los 3 combos responden + chat en , OpenCode, Cursor/Antigravity
 
 ---
 

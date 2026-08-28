@@ -28,11 +28,11 @@ El ecosistema usa **15 cuentas de correo × 3 proveedores = 45 API keys**.
 
 | # | Email de la cuenta | Gemini key | Groq key | Mistral key | Estado |
 |---|---|---|---|---|---|
-| 01 | `01omniroute@gmail.com` | `AIza...` | `gsk_...` | `...` | ✅ agregada |
-| 02 | `02omniroute@gmail.com` |  |  |  | ⬜ pendiente |
-| 03 | `03omniroute@gmail.com` |  |  |  | ⬜ pendiente |
-| 04 | `04omniroute@gmail.com` |  |  |  | ⬜ pendiente |
-| 05 | `05omniroute@gmail.com` |  |  |  | ⬜ pendiente |
+| 01 | `01omniroute@gmail.com` |  |  |  | ✅ agregada |
+| 02 | `freefire33445112@gmail.com` |  |  |  | ✅ agregada |
+| 03 | `jhonatanbrinez62@gmail.com` |  |  |  | ✅ agregada |
+| 04 | `sospetseam@gmail.com` |  |  |  | ✅ agregada |
+| 05 | `antigravitypayan@gmail.com` |  |  |  | ✅ agregada |
 | 06 | `06omniroute@gmail.com` |  |  |  | ⬜ pendiente |
 | 07 | `07omniroute@gmail.com` |  |  |  | ⬜ pendiente |
 | 08 | `08omniroute@gmail.com` |  |  |  | ⬜ pendiente |
@@ -44,7 +44,7 @@ El ecosistema usa **15 cuentas de correo × 3 proveedores = 45 API keys**.
 | 14 | `14omniroute@gmail.com` |  |  |  | ⬜ pendiente |
 | 15 | `15omniroute@gmail.com` |  |  |  | ⬜ pendiente |
 
-> 💡 En la tabla de arriba, cuando llenes las 14 cuentas restantes, OmniRoute **rota solo** entre las 15 cuentas de cada proveedor: no hay que tocar los combos.
+> ✅ **5 de 15 cuentas agregadas.** Cuando llenes las 10 restantes (cuenta-06 a 15), OmniRoute **rota solo** entre las 15 cuentas de cada proveedor: ya está configurado en "AUTO", no hay que tocar los combos.
 
 ---
 
@@ -84,4 +84,7 @@ ENVIRONMENT-IA/
 - [ ] OmniRoute: contraseña maestra → `REQUIRE_API_KEY` → 2 API keys → 3 proveedores → 3 combos → compresión
 - [ ] : `.env` + `.json` con la key de OmniRoute
 - [ ] Agregar en **Providers** cada una de las 45 keys (15 por proveedor)
+- [ ] Dejar los modelos de los combos en **AUTO** (para que roten entre cuentas)
 - [ ] Verificar: `curl` de los 3 combos + chat en `localhost:18789`
+
+> **Estado actual de este ecosistema:** 15/45 keys agregadas (5 cuentas × 3 proveedores) y rotación AUTO activa. Faltan solo las 10 cuentas restantes (30 keys).

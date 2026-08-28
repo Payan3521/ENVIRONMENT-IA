@@ -134,22 +134,24 @@ flowchart LR
 
 ### ⚙️ Configuración práctica actual (agosto 2026)
 
-**Proveedores conectados (1 cuenta por proveedor por ahora):** `gemini`, `groq`, `mistral`.
-Al agregar las otras 14 cuentas (42 keys), cada proveedor tendrá 15 conexiones y la rotación repartirá la carga sola.
+**Proveedores conectados (5 cuentas por proveedor por ahora):** `gemini`, `groq`, `mistral`.
+Al agregar las 10 cuentas restantes (30 keys), cada proveedor llegará a 15 conexiones y la rotación repartirá la carga entre todas.
 
-**Combos creados** (todos con estrategia `priority`):
+**Combos creados** (todos con estrategia `priority` y modelos en **AUTO**, que rotan entre cuentas):
 
 | Combo | Modelos (en orden) | Contexto efectivo | Uso |
 |---|---|---|---|
-| `combo-bajo` | Gemini 2.5 Flash Lite → Groq GPT-OSS-20B → Mistral Small-2603 | 128K | Chat simple, ahorro total |
+| `combo-bajo` | Gemini 3.5 Flash Lite → Mistral Small-2603 → Groq GPT-OSS-20B | 128K | Chat simple, ahorro total |
 | `combo-medio` | Gemini 3.6 Flash → Groq GPT-OSS-120B → Mistral Medium-2604 | 128K | Desarrollo diario (default) |
-| `combo-avanzado` | Gemini 3.7 Flash → Mistral Large-2512 → Codestral-2508 → Devstral-2512 | 256K | Tareas complejas, agentes, código |
+| `combo-avanzado` | Gemini 3.7 Flash → Codestral-2508 → Devstral-2512 → Mistral Large-2512 | 256K | Tareas complejas, agentes, código |
 
 > **Salida (max_tokens):**  las limita a **4096 (bajo) / 8192 (medio y avanzado)** vía `maxTokens` en `.json`. Sin esto,  pediría 65536 de salida y las cuentas gratis de Groq (8K TPM) y Mistral fallarían con `413`/`402`.
 
 **Compresión de contexto:** activa (master ON). Motores **RTK = Aggressive** + **Caveman = Ultra** apilados. `auto-trigger = 0` (siempre al máximo, sin gatillo extra).
 
-**Cliente conectado:**  apunta a `host.docker.internal:20128/v1` (modelo default `openai/combo-medio`). OpenCode (Paso 4) usará `localhost:20128/v1`.
+**Rotación:** los 3 combos tienen todos sus modelos en **AUTO** (sin conexión fija), así que OmniRoute reparte entre las cuentas activas de cada proveedor y salta a la siguiente si una falla o se satura. Probado: una cuenta que falla hace que OmniRoute pruebe otra automáticamente.
+
+**Cliente conectado:**  apunta a `host.docker.internal:20128/v1` (modelo default `openai/combo-medio`). OpenCode (Paso 4) usará `localhost:20128/v1`. Cualquier otro cliente OpenAI (Cursor, Antigravity, etc.) usa el mismo endpoint.
 
 ---
 
